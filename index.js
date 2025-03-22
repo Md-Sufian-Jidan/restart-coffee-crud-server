@@ -30,6 +30,7 @@ async function run() {
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         const coffeeCollection = client.db('Espresso_Emporium_Coffee_Db').collection('Coffee');
+        const userCollection = client.db('Espresso_Emporium_Coffee_Db').collection('user');
 
         app.get('/coffee', async (req, res) => {
             const cursor = coffeeCollection.find();
@@ -54,7 +55,7 @@ async function run() {
 
         app.put('/coffee/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: new ObjectId(id) }
+            const filter = { _id: new ObjectId(id) };
             const options = { upsert: true };
             const updatedCoffee = req.body;
 
@@ -68,7 +69,7 @@ async function run() {
                     details: updatedCoffee.details,
                     photo: updatedCoffee.photo
                 }
-            }
+            };
 
             const result = await coffeeCollection.updateOne(filter, coffee, options);
             res.send(result);
@@ -78,6 +79,14 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await coffeeCollection.deleteOne(query);
+            res.send(result);
+        });
+
+        // user related api's
+        app.post('/user', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const result = await userCollection.insertOne(user);
             res.send(result);
         });
 
